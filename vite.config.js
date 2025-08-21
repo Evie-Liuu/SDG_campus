@@ -10,9 +10,6 @@ export default defineConfig({
     tailwindcss(),
   ],
   base: "/SDG_campus/",
-  build: {
-    outDir: "docs"
-  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'), // @ 指向 src 目录
