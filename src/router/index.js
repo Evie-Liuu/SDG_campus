@@ -7,7 +7,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/SDG_campus/'),
     routes,
     scrollBehavior(to) {
         if (to.hash) {
