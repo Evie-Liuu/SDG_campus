@@ -1,7 +1,9 @@
 <template class="h-max-screen w-min-screen">
-  <header>
-    <h1>中山SDGs記事</h1>
-    <ul class="flex flex-row justify-evenly items-center">
+  <header class="flex flex-col items-center justify-center text-center pt-8 sm:h-[35rem] bg-[url(@/assets/images/瓢蟲石頭.jpg)] bg-cover bg-center">
+    <h1 class="text-white text-4xl font-bold">中山SDGs記事</h1>
+  </header>
+  <main class="grid grid-cols-1 gap-4 m-5">
+    <ul class="flex flex-row justify-evenly items-center mb-5">
       <li v-for="tab in headerTabs" :key="tab.value">
         <a
           href="#"
@@ -11,8 +13,6 @@
         >
       </li>
     </ul>
-  </header>
-  <main class="grid grid-cols-1 gap-4">
     <section
       class="min-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden flex"
       v-for="info in filteredInfo"

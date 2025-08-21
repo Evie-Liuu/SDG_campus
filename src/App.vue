@@ -1,5 +1,5 @@
 <template>
-  <nav class="flex justify-between">
+  <nav class="p-3 font-bold text-white absolute w-full flex flex-row justify-between">
     <router-link :to="{ hash: '#home' }">彰化市中山國民國小</router-link>
     <div>
       <router-link :to="{ name: 'Home', hash: '#home' }">首頁</router-link> |
