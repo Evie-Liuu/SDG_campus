@@ -6,9 +6,9 @@
     <ul class="flex flex-row justify-evenly items-center mb-5">
       <li v-for="tab in headerTabs" :key="tab.value">
         <a
-          href="#"
+          href=""
           :class="{ active: visibilityTab === tab.value }"
-          @click="visibilityTab = tab.value"
+          @click.prevent="visibilityTab = tab.value"
           >{{ tab.name }}</a
         >
       </li>
