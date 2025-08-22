@@ -18,13 +18,13 @@
         探索<br />
         <small>Let's discover the school</small>
       </h1>
-      <picture class="p-8 h-[20rem] bg-cover bg-center">
+      <picture class="h-[20rem] bg-cover bg-center">
         <!-- <source srcset="" /> -->
-        <img src="@/assets/images/CS_map_Filled.png" alt="" />
+        <img class="sm:w-[1000px] mx-auto" src="@/assets/images/CS_map_Filled.png" alt="" />
       </picture>
     </section>
-    <section id="sdgs" class="flex flex-row">
-      <div class="flex-1 p-6">
+    <section id="sdgs" class="flex flex-row sm:w-[1400px] mx-auto">
+      <div class="flex-2 p-6">
         <picture class="bg-cover bg-center">
           <!-- <source srcset="" /> -->
           <img src="@/assets/images/4_領角鴞樂園_2_v2.jpg" alt="" />
