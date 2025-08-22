@@ -1,20 +1,82 @@
 <template class="h-max-screen w-min-screen">
-  <header class="flex flex-col items-center justify-center text-center pt-8 sm:h-[35rem] bg-[url(@/assets/images/瓢蟲石頭.jpg)] bg-cover bg-center">
-    <h1 class="text-white text-4xl font-bold">中山SDGs記事</h1>
+  <header
+    class="flex flex-col items-center justify-center text-center pt-8 md:h-[35rem] bg-[url(@/assets/images/瓢蟲石頭.jpg)] bg-cover bg-center"
+  >
+    <h1 class="text-white text-5xl font-bold">中山SDGs記事</h1>
   </header>
-  <main class="grid grid-cols-1 gap-4 m-5">
-    <ul class="flex flex-row justify-evenly items-center mb-5">
-      <li v-for="tab in headerTabs" :key="tab.value">
-        <a
-          href=""
-          :class="{ active: visibilityTab === tab.value }"
-          @click.prevent="visibilityTab = tab.value"
-          >{{ tab.name }}</a
-        >
-      </li>
-    </ul>
+  <main class="text-xl bg-gray-300 grid grid-cols-1 gap-4 p-5 pt-20">
     <section
-      class="min-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden flex"
+      class="md:max-w-5xl md:mx-auto flex flex-row justify-between items-center w-full"
+    >
+      <ul
+        ref="tabContainer"
+        class="w-full flex flex-row items-center gap-5 h-10 flex-grow"
+      >
+        <li
+          v-for="tab in visibleTabs"
+          :key="tab.value"
+          class="flex-shrink-0 h-full flex items-center"
+        >
+          <a
+            href=""
+            :class="{ active: visibilityTab === tab.value }"
+            class="hover:bg-green-200 rounded p-2 px-3 whitespace-nowrap"
+            @click.prevent="visibilityTab = tab.value"
+            >{{ tab.name }}</a
+          >
+        </li>
+        <li v-if="hiddenTabs.length" class="relative group flex-shrink-0">
+          <a
+            href="#"
+            @click.prevent
+            class="h-full cursor-pointer hover:bg-green-200 rounded p-2 px-3"
+            >更多 ▾</a
+          >
+          <ul
+            class="absolute top-8 left-1 bg-white shadow rounded hidden group-hover:block"
+          >
+            <li v-for="tab in hiddenTabs" :key="tab.value">
+              <a
+                href=""
+                class="block px-4 py-2 bg-gray-100 hover:bg-green-200 whitespace-nowrap rounded"
+                @click.prevent="visibilityTab = tab.value"
+                >{{ tab.name }}</a
+              >
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div ref="rightTools" class="flex items-center">
+        <button @click="showSearch = !showSearch" class="p-2">
+          <!-- 用 Heroicons 或 FontAwesome -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+            />
+          </svg>
+        </button>
+        <transition name="fade">
+          <input
+            v-if="showSearch"
+            v-model="keyword"
+            type="text"
+            placeholder="搜尋..."
+            class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-48"
+          />
+        </transition>
+      </div>
+    </section>
+    <section
+      class="md:min-w-5xl md:mx-auto min-h-80 bg-white rounded-xl shadow-md overflow-hidden flex"
       v-for="info in filteredInfo"
       :key="info.id"
     >
@@ -29,31 +91,115 @@
       </div>
     </section>
   </main>
+  <Footer />
 </template>
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
 import infos from "@/data/ChungShan.json";
-const headerTabs = [
-  {
-    name: "全部",
-    value: 0,
-  },
-  {
-    name: "山野教育",
-    value: 1,
-  },
-  {
-    name: "社區踏查",
-    value: 2,
-  },
-];
-const visibilityTab = ref(headerTabs[0].value);
+import Footer from "@/components/Footer.vue";
 
-const filteredInfo = computed(() => {
-  if (visibilityTab.value === 0) {
-    return infos;
+// I've cleaned up the duplicate data for a better example
+const headerTabs = ref([
+  { name: "全部", value: 0 },
+  { name: "山野教育", value: 1 },
+  { name: "社區踏查", value: 2 },
+  { name: "國際交流", value: 3 },
+  { name: "生態環境", value: 4 },
+  { name: "文化藝術", value: 5 },
+  { name: "科技創新", value: 6 },
+  { name: "健康福祉", value: 7 },
+  { name: "社會實踐", value: 8 },
+]);
+const visibilityTab = ref(headerTabs.value[0].value);
+
+const showSearch = ref(false);
+const keyword = ref("");
+const tabContainer = ref(null);
+const rightTools = ref(null);
+const visibleTabs = ref([]);
+const hiddenTabs = ref([]);
+
+const updateTabs = () => {
+  // Ensure the container and tools refs are available
+  if (!tabContainer.value || !rightTools.value) return;
+
+  const container = tabContainer.value.parentNode;
+  if (!container) return;
+
+  const availableWidth = container.clientWidth - rightTools.value.offsetWidth - 20; // 20px buffer
+  const moreButtonWidth = 300; // Estimated width for the 'More' button
+
+  let usedWidth = 0;
+  const newVisible = [];
+  const newHidden = [];
+
+  // This function now runs *after* all tabs are rendered in the DOM,
+  // so it can correctly measure them.
+  const items = tabContainer.value.querySelectorAll("li:not(.relative)");
+
+  items.forEach((el, i) => {
+    const tabData = headerTabs.value[i];
+    if (!tabData) return;
+
+    const w = el.offsetWidth;
+
+    // Check if there's enough space for the current tab plus the 'More' button
+    if (usedWidth + w < availableWidth - moreButtonWidth) {
+      usedWidth += w;
+      newVisible.push(tabData);
+    } else {
+      newHidden.push(tabData);
+    }
+  });
+
+  // If there's only one hidden item, check if it can fit without the 'More' button
+  if (newHidden.length === 1) {
+    const lastItem = items[newVisible.length];
+    if (lastItem && usedWidth + lastItem.offsetWidth < availableWidth) {
+      newVisible.push(newHidden.shift());
+    }
   }
-  return infos.filter((info) => visibilityTab.value === info.type * 1);
+
+  visibleTabs.value = newVisible;
+  hiddenTabs.value = newHidden;
+};
+
+onMounted(() => {
+  // 1. Initially, put all tabs into `visibleTabs` to force them to render.
+  visibleTabs.value = [...headerTabs.value];
+
+  // 2. Use nextTick to wait for the DOM to update.
+  nextTick(() => {
+    // 3. Now that all `<li>` are in the DOM, calculate which should be visible.
+    updateTabs();
+
+    // 4. Add resize listener for responsiveness.
+    window.addEventListener("resize", updateTabs);
+  });
+});
+
+onUnmounted(() => {
+  // Clean up the event listener to prevent memory leaks
+  window.removeEventListener("resize", updateTabs);
+});
+
+// This computed property now filters by tab AND by keyword on the title.
+const filteredInfo = computed(() => {
+  let results = infos;
+
+  // First, filter by the selected visibility tab
+  if (visibilityTab.value !== 0) {
+    results = infos.filter((info) => info.type * 1 === visibilityTab.value);
+  }
+
+  // Then, filter the results by the search keyword on the title
+  if (keyword.value.trim() !== "") {
+    results = results.filter((info) =>
+      info.title.toLowerCase().includes(keyword.value.trim().toLowerCase())
+    );
+  }
+
+  return results;
 });
 </script>
 <style scoped></style>
