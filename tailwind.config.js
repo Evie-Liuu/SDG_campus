@@ -8,10 +8,12 @@ export default {
     extend: {
       fontFamily: {
         'huninn': ['jf-openhuninn', 'sans-serif'],
-      },
-      color:{
-        "rrd":"#ff0000"
-      }
+      },  
+      // colors: {
+      //   rrd: {
+      //     100: "hsl(333,80%,67%)",
+      //   }
+      // }
     },
   },
   plugins: [],

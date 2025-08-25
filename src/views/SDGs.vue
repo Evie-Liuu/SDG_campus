@@ -46,23 +46,9 @@
           </ul>
         </li>
       </ul>
-      <div ref="rightTools" class="flex items-center">
+      <div ref="rightTools" class="relative flex items-center">
         <button @click="showSearch = !showSearch" class="p-2">
-          <!-- 用 Heroicons 或 FontAwesome -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-            />
-          </svg>
+          <i class="fa-solid fa-magnifying-glass text-2xl"></i>
         </button>
         <transition name="fade">
           <input
@@ -73,12 +59,21 @@
             class="border rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-48"
           />
         </transition>
+        <a
+          v-if="showSearch & keyword.length"
+          href="#"
+          class="absolute right-2"
+          @click.prevent="keyword = ''"
+        >
+          <i class="fa-solid fa-xmark text-gray-400"></i>
+        </a>
       </div>
     </section>
     <section
-      class="md:min-w-5xl md:mx-auto min-h-80 bg-white rounded-xl shadow-md overflow-hidden flex"
+      class="cursor-pointer md:min-w-5xl md:mx-auto min-h-80 bg-white rounded-xl shadow-md overflow-hidden flex"
       v-for="info in filteredInfo"
       :key="info.id"
+      @click="goToArticle(info.id)"
     >
       <img
         src="https://via.placeholder.com/150"
@@ -87,7 +82,7 @@
       />
       <div class="p-4 flex flex-col justify-center">
         <h2 class="text-xl font-bold mb-2">{{ info.title }}</h2>
-        <p class="text-gray-600 text-sm">{{ info.description }}</p>
+        <p class="text-gray-600 text-sm">{{ info.summary }}</p>
       </div>
     </section>
   </main>
@@ -95,6 +90,7 @@
 </template>
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { useRouter } from 'vue-router'
 import infos from "@/data/ChungShan.json";
 import Footer from "@/components/Footer.vue";
 
@@ -126,7 +122,8 @@ const updateTabs = () => {
   const container = tabContainer.value.parentNode;
   if (!container) return;
 
-  const availableWidth = container.clientWidth - rightTools.value.offsetWidth - 20; // 20px buffer
+  const availableWidth =
+    container.clientWidth - rightTools.value.offsetWidth - 20; // 20px buffer
   const moreButtonWidth = 300; // Estimated width for the 'More' button
 
   let usedWidth = 0;
@@ -173,7 +170,6 @@ onMounted(() => {
     // 3. Now that all `<li>` are in the DOM, calculate which should be visible.
     updateTabs();
 
-    // 4. Add resize listener for responsiveness.
     window.addEventListener("resize", updateTabs);
   });
 });
@@ -183,7 +179,6 @@ onUnmounted(() => {
   window.removeEventListener("resize", updateTabs);
 });
 
-// This computed property now filters by tab AND by keyword on the title.
 const filteredInfo = computed(() => {
   let results = infos;
 
@@ -201,5 +196,11 @@ const filteredInfo = computed(() => {
 
   return results;
 });
+
+const router = useRouter()  
+const goToArticle = (id) => {
+  router.push({ name: "article-detail", params: { id } });
+};
 </script>
+
 <style scoped></style>

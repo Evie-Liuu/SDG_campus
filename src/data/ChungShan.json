@@ -4,13 +4,16 @@
         "title": "讀經教育",
         "time": "",
         "type": "1",
-        "description": "全校讀論語 星期四讀經和鎮長。"
+        "summary": "全校讀論語 星期四讀經和鎮長。",
+        "description": "全校讀論語 星期四讀經和鎮長。",
+        "thumbnail": "thumb2.jpg"
     },
     {
         "id": 2,
         "title": "舞蹈社團",
         "time": "",
         "type": "1",
+        "summary": "精彩的舞蹈表演，獲得滿堂彩。",
         "description": "精彩的舞蹈表演，獲得滿堂彩。"
     },
     {
@@ -18,6 +21,7 @@
         "title": "社區踏查",
         "time": "",
         "type": "2",
+        "summary": "",
         "description": ""
     }
 ]
