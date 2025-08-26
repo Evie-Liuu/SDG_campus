@@ -90,7 +90,7 @@
 </template>
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 import infos from "@/data/ChungShan.json";
 import Footer from "@/components/Footer.vue";
 
@@ -197,7 +197,7 @@ const filteredInfo = computed(() => {
   return results;
 });
 
-const router = useRouter()  
+const router = useRouter();
 const goToArticle = (id) => {
   router.push({ name: "article-detail", params: { id } });
 };

@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="p-9 font-bold text-white text-2xl absolute w-full flex flex-row justify-between"
+    class="p-9 font-bold text-white text-2xl absolute z-10 w-full flex flex-row justify-between"
   >
     <router-link :to="{ hash: '#home' }"
       ><span class="text-3d">彰化市中山國民小學</span></router-link

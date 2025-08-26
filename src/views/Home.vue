@@ -2,7 +2,7 @@
   <main class="grid grid-cols-1 md:gap-15">
     <section
       id="home"
-      class="md:h-[1024px] flex flex-col items-center justify-center text-center pt-8 md:h-[35rem] bg-[url(@/assets/images/CS.jpg)] bg-cover bg-center"
+      class="relative md:h-[1024px] flex flex-col items-center justify-center text-center pt-8 bg-[url(@/assets/images/CS.jpg)] bg-cover bg-center"
     >
       <div class="text-white font-bold">
         <transition name="fade-slide" appear>
@@ -23,7 +23,7 @@
           </h1>
         </transition>
         <a
-          class="absolute bottom-15"
+          class="absolute bottom-5 -translate-[50%]"
           href="#"
           target="_blank"
           @click.prevent="scrollToExplore"
